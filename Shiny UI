@@ -1,1 +1,50 @@
 
+
+library(shiny)
+library(shinythemes)
+ui <- fluidPage()
+server <- function(input, output) {}
+
+
+
+#Setting up title
+fluidPage( theme = shinytheme("cerulean"),
+  titlePanel(h1("Bitcoin Exchange Rate",windowTitle="TEST")),
+sidebarLayout(
+  sidebarPanel(
+               selectInput("variable","Change", 
+                           choices="USD"),
+               selectInput("variable2","To", choices="Bitcoin"),
+                numericInput("Value","Value you want",min=1,value=1),
+               br(),br(),
+  
+               h3("Introduction"),
+               helpText("This is a quick", strong("USD/Bitcoin") ,"conversion rate with a live bitcoin exchange. Follow by a live conversion of the top10 
+                        cryptocurrency.The", strong("ROI Graph"), "provide an estimate of gains and loss over the period of time starting 2014 if someone invested into bitcoin.
+                        As bitcoin is growing and more noticeable, the ", strong("Popularity Map"), " identify the popularity of bitcoin in each state based on Google search of the term related to bitcoin."
+                        
+               )),
+  
+  mainPanel(
+    tabsetPanel(
+      tabPanel(h3('Exchanged Currency'),
+    h4("From"),
+    verbatimTextOutput("oid1"),
+    h4("To"),
+    verbatimTextOutput("oid2"),
+    h4("Amount"),
+    verbatimTextOutput("amount"),
+    br(),br(),
+    h4("Current Price of Top 10 Crypto Currency"),
+    DT::dataTableOutput("Crypto")),
+    
+      
+    tabPanel(h3("ROI Graph"),plotOutput("coolplot")),
+    tabPanel(h3("Populartiy Map"),plotOutput("map")) 
+    
+    
+    )
+  )
+  
+)
+)
