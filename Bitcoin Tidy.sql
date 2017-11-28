@@ -1,3 +1,7 @@
+Create Databse Crypto;
+
+
+
 Create Table Bitcoin (
 			Time_stamp varchar(25),
              Open_price double,
@@ -6,7 +10,10 @@ Create Table Bitcoin (
              Close_price  double,
              Volume_BTC double,
              Volume_currency double,
-			 Weighted_price double
+	     Weighted_price double,
+	     B1.Height double,
+	     B2.Height double,
+	     B2.TimeStampUtc double,
              );
              
              
@@ -20,6 +27,21 @@ FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\r\n'
 IGNORE 1 LINES;
 
+SELECT 
+	B1.Height AS FromBlock, 
+	B2.Height AS ToBlock, 
+	B3.Height AS FromTime,
+	B2.TimeStampUtc AS ToTime,
+	IIF(B2.TimeStampUTC < B1.TimeStampUTC, '-', '') +  RIGHT('00' + CONVERT(varchar, (DATEDIFF(SECOND, B1.TimeStampUTC, B2.TimeStampUTC) / 86400)), 2) + ':' + CONVERT(varchar, DATEADD(ss, DATEDIFF(SECOND, IIF(B1.TimeStampUTC < B2.TimeStampUTC, B1.TimeStampUTC, B2.TimeStampUTC), IIF(B2.TimeStampUTC > B1.TimeStampUTC, B2.TimeStampUTC, B1.TimeStampUTC)), 0), 108) AS Duration_DDHHMMSS,
+	DATEDIFF(SECOND, B1.TimeStampUTC, B2.TimeStampUTC) as DurationSeconds
+FROM 
+	Block B1 INNER JOIN
+	Block B2 ON B1.Height = B2.Height - 1
+WHERE
+	B1.BranchID = 1 AND  -- Ignore orphaned blocks
+	B2.BranchID = 1      -- Ignore orphaned blocks
+ORDER BY
+	DurationSeconds DESC  -- Change between 'ASC' to 'DESC' to order differently
 
 
 #/ Fixing data and deleting NA data*/
